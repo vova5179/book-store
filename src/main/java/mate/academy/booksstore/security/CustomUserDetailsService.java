@@ -32,6 +32,5 @@ public class CustomUserDetailsService implements UserDetailsService {
             return builder.build();
         }
         throw new UsernameNotFoundException("User not found");
-
     }
 }
