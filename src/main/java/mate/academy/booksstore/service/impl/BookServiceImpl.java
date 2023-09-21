@@ -2,7 +2,6 @@ package mate.academy.booksstore.service.impl;
 
 import java.util.List;
 import mate.academy.booksstore.dto.BookDto;
-import mate.academy.booksstore.dto.BookDtoWithoutCategoryIds;
 import mate.academy.booksstore.dto.CreateBookRequestDto;
 import mate.academy.booksstore.exception.EntityNotFoundException;
 import mate.academy.booksstore.mapper.BookMapper;
@@ -40,14 +39,6 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException("Can't find book with id " + id));
         return bookMapper.toDto(book);
-    }
-
-    @Override
-    public List<BookDtoWithoutCategoryIds> findBooksByCategoryId(Long id) {
-        List<Book> allByCategoriesId = bookRepository.findAllByCategoriesId(id);
-        return allByCategoriesId.stream()
-                .map(bookMapper::toDtoWithoutCategories)
-                .toList();
     }
 
     @Override
