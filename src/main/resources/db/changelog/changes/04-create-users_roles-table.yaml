@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users_roles-table
+      author: vova
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+

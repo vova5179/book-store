@@ -9,8 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,39 +20,37 @@ import org.hibernate.annotations.Where;
 
 @Data
 @Entity
-@Table(name = "books")
+@Table(name = "users")
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id=?")
 @Where(clause = "is_deleted=false")
-public class Book {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String author;
-
     @Column(unique = true, nullable = false)
-    private String isbn;
+    private String email;
 
     @Column(nullable = false)
-    private BigDecimal price;
-
-    private String description;
-
-    private String coverImage;
+    private String password;
 
     @Column(nullable = false)
-    private boolean isDeleted = false;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    private String shippingAddress;
 
     @Fetch(FetchMode.JOIN)
     @ManyToMany
-    @JoinTable(name = "books_categories",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Category> categories = new HashSet<>();
+    private Set<Role> roles;
+
+    @Column(nullable = false)
+    private boolean isDeleted;
 }
