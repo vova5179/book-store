@@ -11,6 +11,7 @@ import mate.academy.booksstore.dto.CreateCategoryRequestDto;
 import mate.academy.booksstore.service.BookService;
 import mate.academy.booksstore.service.CategoryService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,9 +47,9 @@ public class CategoryController {
     @GetMapping()
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Get all categories", description = "Get all categories")
-    public List<CategoryDto> getAll(@RequestParam(defaultValue = "5")
+    public List<CategoryDto> getAll(@PageableDefault(page = 0, value = 5)
                                     @Parameter(name = "Default value is 5",
-                                    description = "Default value is 5") int size,
+                                    description = "Default value is 5")
                                     Pageable pageable) {
         return categoryService.findAll(pageable);
     }

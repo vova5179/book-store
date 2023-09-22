@@ -10,15 +10,13 @@ import mate.academy.booksstore.model.Book;
 import mate.academy.booksstore.model.Category;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = MapperConfig.class, uses = {MapperUtil.class})
+@Mapper(config = MapperConfig.class)
 public interface BookMapper {
 
     BookDto toDto(Book book);
 
-    @Mapping(source = "categoryIds", target = "categories", qualifiedByName = "getCategoryById")
     Book toModel(CreateBookRequestDto requestDto);
 
     BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
@@ -29,5 +27,14 @@ public interface BookMapper {
                 .map(Category::getId)
                 .collect(Collectors.toSet());
         bookDto.setCategoryIds(categoryIds);
+    }
+
+    @AfterMapping
+    default void setCategoriesFromRequestDto(@MappingTarget Book book,
+                                             CreateBookRequestDto requestDto) {
+        Set<Category> categories = requestDto.getCategoryIds().stream()
+                .map(Category::new)
+                .collect(Collectors.toSet());
+        book.setCategories(categories);
     }
 }

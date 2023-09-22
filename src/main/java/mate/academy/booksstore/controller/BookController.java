@@ -10,6 +10,7 @@ import mate.academy.booksstore.dto.CreateBookRequestDto;
 import mate.academy.booksstore.mapper.BookMapper;
 import mate.academy.booksstore.service.BookService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,9 +36,9 @@ public class BookController {
     @GetMapping()
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Get all books", description = "Get all books")
-    public List<BookDto> getAll(@RequestParam(defaultValue = "5")
+    public List<BookDto> getAll(@PageableDefault(page = 0, value = 5)
                                 @Parameter(name = "Default value is 5",
-                                description = "Default value is 5") int size,
+                                description = "Default value is 5")
                                 Pageable pageable) {
         return bookService.findAll(pageable);
     }
@@ -54,7 +54,7 @@ public class BookController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new book", description = "Create a new book")
-    public BookDto createBook(@RequestBody CreateBookRequestDto requestDto) {
+    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
     }
 
