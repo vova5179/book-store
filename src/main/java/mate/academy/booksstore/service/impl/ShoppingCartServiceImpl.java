@@ -16,7 +16,6 @@ import mate.academy.booksstore.repository.CartItemsRepository;
 import mate.academy.booksstore.repository.ShoppingCartRepository;
 import mate.academy.booksstore.repository.UserRepository;
 import mate.academy.booksstore.service.ShoppingCartService;
-import mate.academy.booksstore.service.UserService;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -27,7 +26,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemMapper cartItemMapper;
     private final CartItemsRepository cartItemsRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final BookRepository bookRepository;
 
     @Override
