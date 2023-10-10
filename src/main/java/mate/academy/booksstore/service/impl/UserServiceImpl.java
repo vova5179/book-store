@@ -4,7 +4,6 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.booksstore.dto.UserRegistrationRequestDto;
 import mate.academy.booksstore.dto.UserResponseDto;
-import mate.academy.booksstore.exception.EntityNotFoundException;
 import mate.academy.booksstore.exception.RegistrationException;
 import mate.academy.booksstore.mapper.UserMapper;
 import mate.academy.booksstore.model.Role;
@@ -13,8 +12,6 @@ import mate.academy.booksstore.model.User;
 import mate.academy.booksstore.repository.RoleRepository;
 import mate.academy.booksstore.repository.UserRepository;
 import mate.academy.booksstore.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -48,14 +45,5 @@ public class UserServiceImpl implements UserService {
         }
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
-    }
-
-    @Override
-    public User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException("Can't find user by username: "
-                + authentication.getName()));
-        return user;
     }
 }

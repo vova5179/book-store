@@ -31,12 +31,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final BookRepository bookRepository;
 
     @Override
-    public ShoppingCartDto addCartItemToShoppingCart(CartItemRequestDto requestDto) {
-        String email = userService.getUser().getEmail();
-        if (!checkExistShoppingCart(email)) {
-            registerNewShoppingCart(email);
+    public ShoppingCartDto addToCart(CartItemRequestDto requestDto, Long userId) {
+        if (!checkExistShoppingCart(userId)) {
+            registerNewShoppingCart(userId);
         }
-        ShoppingCart shoppingCart = getShoppingCartModel();
+        ShoppingCart shoppingCart = getShoppingCartModel(userId);
         CartItem cartItem = cartItemMapper.toModel(requestDto);
         Long bookId = cartItem.getBook().getId();
         Book book = bookRepository.findById(bookId).orElseThrow(() ->
@@ -48,47 +47,46 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCartDto getShoppingCart() {
-        String email = userService.getUser().getEmail();
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(email).orElseThrow(() ->
-                new EntityNotFoundException("Can't find user with email " + email));
+    public ShoppingCartDto getShoppingCart(Long userId) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId).orElseThrow(() ->
+                new EntityNotFoundException("Can't find user with id " + userId));
         return shoppingCartMapper.toDto(shoppingCart);
     }
 
     @Override
-    public ShoppingCartDto updateShoppingCart(Long id, CartItemUpdateRequestDto requestDto) {
+    public ShoppingCartDto updateShoppingCart(Long cartId, CartItemUpdateRequestDto requestDto,
+                                              Long userId) {
         Integer quantity = requestDto.getQuantity();
-        ShoppingCart shoppingCart = getShoppingCartModel();
+        ShoppingCart shoppingCart = getShoppingCartModel(userId);
         CartItem cartItem = shoppingCart.getCartItems().stream()
-                .filter(c -> c.getId() == id)
+                .filter(c -> c.getId() == cartId)
                 .findFirst().orElseThrow(() ->
-                        new EntityNotFoundException("Can't find book with id " + id));
+                        new EntityNotFoundException("Can't find book with id " + cartId));
         cartItem.setQuantity(quantity);
-        return getShoppingCart();
+        return getShoppingCart(userId);
     }
 
     @Override
-    public ShoppingCartDto removeCartItem(Long id) {
-        if (!cartItemsRepository.existsById(id)) {
-            throw new EntityNotFoundException("Can't delete cart item by id: " + id);
+    public ShoppingCartDto removeCartItem(Long cartId, Long userId) {
+        if (!cartItemsRepository.existsById(cartId)) {
+            throw new EntityNotFoundException("Can't delete cart item by id: " + cartId);
         }
-        cartItemsRepository.deleteById(id);
-        return getShoppingCart();
+        cartItemsRepository.deleteById(cartId);
+        return getShoppingCart(userId);
     }
 
-    private boolean checkExistShoppingCart(String email) {
-        return shoppingCartRepository.findByUserEmail(email).isPresent();
+    private boolean checkExistShoppingCart(Long id) {
+        return shoppingCartRepository.findByUserId(id).isPresent();
     }
 
-    private ShoppingCart getShoppingCartModel() {
-        User user = userService.getUser();
-        return shoppingCartRepository.findByUserEmail(user.getEmail()).get();
+    private ShoppingCart getShoppingCartModel(Long userId) {
+        return shoppingCartRepository.findByUserId(userId).get();
     }
 
-    private void registerNewShoppingCart(String email) {
-        User userByEmail = userRepository.findByEmail(email).get();
+    private void registerNewShoppingCart(Long userId) {
+        User user = userRepository.findById(userId).get();
         ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(userByEmail);
+        shoppingCart.setUser(user);
         shoppingCartRepository.save(shoppingCart);
     }
 }
