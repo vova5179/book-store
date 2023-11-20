@@ -51,12 +51,12 @@ public class ShoppingCartController {
     @PutMapping("/cart-items/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Update quantity of book in shopping cart")
-    public ShoppingCartDto updateShoppingCart(@PathVariable Long cartId,
+    public ShoppingCartDto updateShoppingCart(@PathVariable Long id,
                                               @RequestBody
                                               @Valid CartItemUpdateRequestDto requestDto,
                                               Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.updateShoppingCart(cartId, requestDto, user.getId());
+        return shoppingCartService.updateShoppingCart(id, requestDto, user.getId());
     }
 
     @DeleteMapping("/cart-items/{id}")
