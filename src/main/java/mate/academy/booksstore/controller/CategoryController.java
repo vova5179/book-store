@@ -49,7 +49,7 @@ public class CategoryController {
     @Operation(summary = "Get all categories", description = "Get all categories")
     public List<CategoryDto> getAll(@PageableDefault(page = 0, value = 5)
                                     @Parameter(name = "Default value is 5",
-                                    description = "Default value is 5")
+                                            description = "Default value is 5")
                                     Pageable pageable) {
         return categoryService.findAll(pageable);
     }
@@ -69,18 +69,18 @@ public class CategoryController {
         return categoryService.update(id, requestDto);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a category by id",
-               description = "Delete a category by id")
-    public void delete(Long id) {
+            description = "Delete a category by id")
+    public void delete(@PathVariable Long id) {
         categoryService.deleteById(id);
     }
 
     @GetMapping("/{id}/books")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Get all books by category id",
-               description = "Get all books by category id")
+            description = "Get all books by category id")
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(@PathVariable Long id) {
         return bookService.findBooksByCategoryId(id);
     }
