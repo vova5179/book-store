@@ -14,7 +14,6 @@ import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
@@ -25,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
 @Entity
-@Accessors(chain = true)
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id=?")
 @Where(clause = "is_deleted=false")

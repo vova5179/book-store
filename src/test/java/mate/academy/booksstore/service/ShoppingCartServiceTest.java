@@ -95,13 +95,13 @@ class ShoppingCartServiceTest {
         Role roleAdmin = new Role();
         roleAdmin.setName(RoleName.ADMIN);
         user = new User();
-        user.setId(EXIST_ID)
-                .setEmail("email@example.com")
-                .setPassword("password")
-                .setFirstName("Bob")
-                .setLastName("Bobs")
-                .setShippingAddress("Shipping address")
-                .setRoles(Set.of(roleAdmin));
+        user.setId(EXIST_ID);
+        user.setEmail("email@example.com");
+        user.setPassword("password");
+        user.setFirstName("Bob");
+        user.setLastName("Bobs");
+        user.setShippingAddress("Shipping address");
+        user.setRoles(Set.of(roleAdmin));
         shoppingCart = new ShoppingCart();
         cartItem = new CartItem();
         cartItem.setId(EXIST_ID);

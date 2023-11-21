@@ -1,10 +1,13 @@
 package mate.academy.booksstore.controller;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +51,7 @@ public class ShoppingCartControllerTest {
 
     @BeforeEach
     public void beforeEach(@Autowired DataSource dataSource,
-                           @Autowired WebApplicationContext context)
-            throws SQLException {
+                           @Autowired WebApplicationContext context) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -97,16 +99,13 @@ public class ShoppingCartControllerTest {
     @DisplayName("Get all cart items in shopping cart")
     public void getShoppingCart_givenUserId_returnShoppingCartDto() throws Exception {
         String token = jwtUtil.generateToken("admin@example.com");
-        MvcResult result = mockMvc.perform(get("/api/cart")
+        mockMvc.perform(get("/api/cart")
                         .header("Authorization", "Bearer " + token))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id", is(1)))
+                        .andExpect(jsonPath("$.userId", is(1)))
+                        .andExpect(jsonPath("$.cartItems", hasSize(2)))
                         .andReturn();
-
-        ShoppingCartDto actual = objectMapper.readValue(result
-                .getResponse()
-                .getContentAsString(), ShoppingCartDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(2, actual.getCartItems().size());
     }
 
     @Test
@@ -125,13 +124,8 @@ public class ShoppingCartControllerTest {
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isCreated())
+                        .andExpect(jsonPath("$.cartItems", hasSize(3)))
                         .andReturn();
-
-        ShoppingCartDto actual = objectMapper.readValue(result
-                .getResponse()
-                .getContentAsString(), ShoppingCartDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(3, actual.getCartItems().size());
     }
 
     @Test
